@@ -3,6 +3,10 @@ import json
 import numpy
 from collections import OrderedDict
 import sys
+from json import encoder
+encoder.FLOAT_REPR = lambda o: format(o, '.4g')
+
+AXIS_VAR=['time','lat','latitude','lon','longitude']
 
 def print_val(val):
     """
@@ -15,7 +19,7 @@ def print_val(val):
     if type(val) in [int, numpy.int, numpy.int_, numpy.intc, numpy.intp, numpy.int8, numpy.int16, numpy.int32, numpy.int64, numpy.uint8, numpy.uint16, numpy.uint32, numpy.uint64]:
         return int(val)
     if type(val) in [float, numpy.float, numpy.float_, numpy.float16, numpy.float32, numpy.float64] :
-        return float(val)
+        return 'null' if numpy.isnan(val) else '%.6g' % val
     if type(val) in [complex, numpy.complex, numpy.complex_, numpy.complex64, numpy.complex128]:
         return [float(val.real),float(val.imag)]
     else:
@@ -41,43 +45,49 @@ class NCDataset(Dataset):
         except:
             print('Failed to export dimensions')
             raise
-
-        res['variables']=OrderedDict()
-        for var in self.variables:
-            try:
-                res['variables'][var]={'type':self.variables[var].datatype.name,
-                                       'dimensions':[d for d in self.variables[var].dimensions],
-                                       'attributes':OrderedDict()}
-                for att in self.variables[var].ncattrs():
-                    res['variables'][var]['attributes'].update({str(att):print_val(self.variables[var].getncattr(att))})
-            except:
-                print('Failed to export variable %s description or attributes'%(var))
-                raise
-
         try:
             res['global_attributes']=OrderedDict()
             for att in self.ncattrs():
                 res['global_attributes'].update({str(att):print_val(self.getncattr(att))})
         except:
             print('Failed to export all global_attribute %s'%(att))
-
-        res['data']=OrderedDict()
+        res['variables']=OrderedDict()
+        #Put axis variables first
+        for special_var in AXIS_VAR:
+            if special_var in self.variables:
+                res['variables'][special_var]=None
         for var in self.variables:
             try:
+                if var=='time':
+                    res['variables']['time']={'dimensions':['time']}
+                    continue
+                res['variables'][var]={'dimensions':[d for d in self.variables[var].dimensions],
+                                       'attributes':OrderedDict()}
+                for att in self.variables[var].ncattrs():
+                    if att not in ['missing_value','cell_methods']: 
+                        res['variables'][var]['attributes'].update({str(att):print_val(self.variables[var].getncattr(att))})
+            except:
+                print('Failed to export variable %s description or attributes'%(var))
+                raise
 
-                vals=numpy.array(self.variables[var]).flatten().tolist()
-            
-                  #if var == 'time' and 'units' in self.variables[var].ncattrs():
-                  #    if 'calendar' in self.variables[var].ncattrs():
-                  #        vals=[str(t) for t in num2date(vals, self.variables[var].getncattr('units'),
-                  #        self.variables[var].getncattr('calendar'))]
-                  #        res['data'].update({var:vals})
-                  #    else:
-                  #        vals=[str(t) for t in num2date(vals, self.variables[var].getncattr('units'))]
-                  #        res['data'].update({var:vals})
-                  #else:
-                vals=[print_val(val) for val in vals]
-                res['data'].update({var:vals})
+        res['data']=OrderedDict()
+        for special_var in AXIS_VAR:
+            if special_var in self.variables:
+                res['data'][special_var]=None
+        for var in self.variables:
+            try:
+                self.variables[var].set_auto_mask(True)
+                rawvals=numpy.ma.array(self.variables[var][:]).filled(numpy.nan)
+                if var == 'time' and 'units' in self.variables[var].ncattrs():
+                    if 'calendar' in self.variables[var].ncattrs():
+                        vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in num2date(rawvals, self.variables[var].getncattr('units'),
+                        self.variables[var].getncattr('calendar'))]
+                        res['data'].update({var:vals})
+                    else:
+                        vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in num2date(rawvals, self.variables[var].getncattr('units'))]
+                        res['data'].update({var:vals})
+                else:
+                    res['data'].update({var:rawvals.tolist()})
             except:
                   print('Failed to export values for variable %s'%(var))
                   raise
@@ -142,4 +152,19 @@ class NCDataset(Dataset):
                 self.variables[var][:]=numpy.array(dico['data'][var]).reshape(self.variables[var].shape)
             except:
                 print('Could not populate variable %s'%var)
+                
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv)<2:
+        print 'Usage: nc_json.py netcdf_file [json_file]'
+    else:
+        nc=NCDataset(sys.argv[1])
+        s=nc.json_dumps(indent=2)
+        if len(sys.argv)<3:
+            print s
+        else:
+            f=open(sys.argv[2],'w')
+            f.write(s)
+            f.close()
+            
                 
