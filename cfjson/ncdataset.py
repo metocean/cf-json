@@ -1,9 +1,12 @@
-from netCDF4 import Dataset, num2date
 import json
 import numpy
-from collections import OrderedDict
 import sys
 from json import encoder
+from collections import OrderedDict
+from netCDF4 import Dataset, num2date
+
+
+
 encoder.FLOAT_REPR = lambda o: format(o, '.4g')
 
 AXIS_VAR=['time','lat','latitude','lon','longitude']
