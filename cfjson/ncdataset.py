@@ -9,7 +9,7 @@ from netCDF4 import Dataset, num2date
 
 encoder.FLOAT_REPR = lambda o: format(o, '.4g')
 
-AXIS_VAR=['time','lat','latitude','lon','longitude']
+AXIS_VAR=['time','lat','latitude','lon','longitude','site']
 
 def print_val(val):
     """
@@ -44,7 +44,8 @@ class NCDataset(Dataset):
         try:
             res['dimensions']=OrderedDict()
             for dim in self.dimensions:
-                res['dimensions'][dim]=len(self.dimensions[dim])
+                if len(self.dimensions[dim])>1:
+                    res['dimensions'][dim]=len(self.dimensions[dim])
         except:
             print('Failed to export dimensions')
             raise
@@ -61,11 +62,17 @@ class NCDataset(Dataset):
                 res['variables'][special_var]=None
         for var in self.variables:
             try:
-                if var=='time':
-                    res['variables']['time']={'dimensions':['time']}
+                if var=='dum1': #This is UDS artefact
                     continue
-                res['variables'][var]={'dimensions':[d for d in self.variables[var].dimensions],
-                                       'attributes':OrderedDict()}
+                if var=='time':
+                    res['variables']['time']={
+                        'dimensions':['time'],
+                        'attributes':{'units':'ISO8601 timestamps'}    
+                    }
+                    continue
+                vardims=[d for d in self.variables[var].dimensions if d in res['dimensions']]
+                res['variables'][var]={'attributes':OrderedDict()}
+                if len(vardims):res['variables']['dimensions']=vardims
                 for att in self.variables[var].ncattrs():
                     if att not in ['missing_value','cell_methods']: 
                         res['variables'][var]['attributes'].update({str(att):print_val(self.variables[var].getncattr(att))})
@@ -79,8 +86,10 @@ class NCDataset(Dataset):
                 res['data'][special_var]=None
         for var in self.variables:
             try:
+                if var=='dum1':
+                    continue
                 self.variables[var].set_auto_mask(True)
-                rawvals=numpy.ma.array(self.variables[var][:]).filled(numpy.nan)
+                rawvals=numpy.ma.array(self.variables[var][:]).filled(numpy.nan).squeeze()
                 if var == 'time' and 'units' in self.variables[var].ncattrs():
                     if 'calendar' in self.variables[var].ncattrs():
                         vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in num2date(rawvals, self.variables[var].getncattr('units'),
