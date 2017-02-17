@@ -22,7 +22,6 @@ setup(
     url="",
     keywords=["CF-JSON"],
     install_requires=REQUIRES,
-    packages=find_packages(),
     long_description="""\
     Classes and functions for CF-JSON format conversion
     """
