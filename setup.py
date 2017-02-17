@@ -1,7 +1,6 @@
 # coding: utf-8
-
 import sys
-from setuptools import setup, find_packages
+from distutils.core import setup
 
 NAME = "cfjson"
 VERSION = "0.1"
