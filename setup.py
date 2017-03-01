@@ -1,6 +1,6 @@
 # coding: utf-8
 import sys
-from distutils.core import setup
+from setuptools import setup
 
 NAME = "cfjson"
 VERSION = "0.1"
@@ -18,8 +18,7 @@ setup(
     name=NAME,
     version=VERSION,
     description="CF JSON converters",
-    author_email="",
-    url="",
+    author_email="ops@metocean.co.nz",
     keywords=["CF-JSON"],
     packages=[NAME],
     requires=REQUIRES,
