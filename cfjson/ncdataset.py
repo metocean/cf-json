@@ -72,7 +72,7 @@ class NCDataset(Dataset):
                     continue
                 vardims=[d for d in self.variables[var].dimensions if d in res['dimensions']]
                 res['variables'][var]={'attributes':OrderedDict()}
-                if len(vardims):res['variables']['dimensions']=vardims
+                if len(vardims):res['variables'][var]['dimensions']=vardims
                 for att in self.variables[var].ncattrs():
                     if att not in ['missing_value','cell_methods']: 
                         res['variables'][var]['attributes'].update({str(att):print_val(self.variables[var].getncattr(att))})
@@ -106,7 +106,7 @@ class NCDataset(Dataset):
 
         return res
 
-    def json_dumps(self, indent=None, separators=None):
+    def json_dumps(self, indent=None, separators=None, mapping={}):
         """
         Dumps a JSON representation of the Dataset following the same conventions as ncdump.
         Assumes the Dataset is CF complient.
@@ -115,7 +115,7 @@ class NCDataset(Dataset):
         return json.dumps(dico, indent=indent, separators=separators)
 
     
-    def from_json(self, js):
+    def from_json(self, js, mapping={}):
         """
         Populates a NCDataset object from its JSON representation.
         """
@@ -168,7 +168,7 @@ class NCDataset(Dataset):
 if __name__ == '__main__':
     import sys
     if len(sys.argv)<2:
-        print 'Usage: nc_json.py netcdf_file [json_file]'
+        print 'Usage: ncdataset.py netcdf_file [json_file]'
     else:
         nc=NCDataset(sys.argv[1])
         s=nc.json_dumps(indent=2)
