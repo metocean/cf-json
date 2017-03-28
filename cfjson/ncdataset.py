@@ -35,7 +35,7 @@ class NCDataset(Dataset):
     Class derived from the Dataset class of NetCDF4 library and implementing methods
     that dump to and load from JSON.
     """
-    def to_dict(self):
+    def to_dict(self,mapping={}):
         """
         Dumps the dataset as an ordered dictionnary following the same conventions as ncdump.
         Assumes the Dataset is CF complient.
@@ -61,6 +61,7 @@ class NCDataset(Dataset):
             if special_var in self.variables:
                 res['variables'][special_var]=None
         for var in self.variables:
+            varout=mapping.get(var,var)
             try:
                 if var=='dum1': #This is UDS artefact
                     continue
@@ -71,11 +72,11 @@ class NCDataset(Dataset):
                     }
                     continue
                 vardims=[d for d in self.variables[var].dimensions if d in res['dimensions']]
-                res['variables'][var]={'attributes':OrderedDict()}
-                if len(vardims):res['variables'][var]['dimensions']=vardims
+                res['variables'][varout]={'attributes':OrderedDict()}
+                if len(vardims):res['variables'][varout]['dimensions']=vardims
                 for att in self.variables[var].ncattrs():
                     if att not in ['missing_value','cell_methods']: 
-                        res['variables'][var]['attributes'].update({str(att):print_val(self.variables[var].getncattr(att))})
+                        res['variables'][varout]['attributes'].update({str(att):print_val(self.variables[var].getncattr(att))})
             except:
                 print('Failed to export variable %s description or attributes'%(var))
                 raise
@@ -85,6 +86,7 @@ class NCDataset(Dataset):
             if special_var in self.variables:
                 res['data'][special_var]=None
         for var in self.variables:
+            varout=mapping.get(var,var)
             try:
                 if var=='dum1':
                     continue
@@ -94,12 +96,12 @@ class NCDataset(Dataset):
                     if 'calendar' in self.variables[var].ncattrs():
                         vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in num2date(rawvals, self.variables[var].getncattr('units'),
                         self.variables[var].getncattr('calendar'))]
-                        res['data'].update({var:vals})
+                        res['data'].update({varout:vals})
                     else:
                         vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in num2date(rawvals, self.variables[var].getncattr('units'))]
-                        res['data'].update({var:vals})
+                        res['data'].update({varout:vals})
                 else:
-                    res['data'].update({var:rawvals.tolist()})
+                    res['data'].update({varout:rawvals.tolist()})
             except:
                   print('Failed to export values for variable %s'%(var))
                   raise
@@ -111,7 +113,7 @@ class NCDataset(Dataset):
         Dumps a JSON representation of the Dataset following the same conventions as ncdump.
         Assumes the Dataset is CF complient.
         """
-        dico=self.to_dict()
+        dico=self.to_dict(mapping)
         return json.dumps(dico, indent=indent, separators=separators)
 
     

@@ -81,7 +81,7 @@ class CFJSONinterface(object):
 
         return res
 
-    def json_dumps(self, indent=None, separators=None, mapping={}, attributes={}):
+    def json_dumps(self, indent=2, separators=None, mapping={}, attributes={}):
         """
         Dumps a JSON representation of the Dataset following the same conventions as ncdump.
         Assumes the Dataset is CF complient.
