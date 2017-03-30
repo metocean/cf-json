@@ -1,1 +1,1 @@
-xarray
+xarray >= 0.9.1
