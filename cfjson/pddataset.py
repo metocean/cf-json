@@ -50,22 +50,26 @@ class PDDataset(pd.DataFrame):
             if special_var in self.columns:
                 res['data'][special_var]=None
         timevals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in self.index.astype(datetime.datetime)]
+        res['data']['time']=timevals
         for var in self.columns:
             varout=mapping.get(var,var)
-            fac=factor.get(var,1.0)
-            off=offset.get(var,0.0)
             try:
-                rawvals=(fac*self.loc[:,var].values+off).tolist()
-                res['data'].update({varout:rawvals})
+                rawvals=self.loc[:,var].values
+                if rawvals.dtype!=numpy.dtype('O'):
+                    fac=factor.get(var,1.0)
+                    off=offset.get(var,0.0)
+                    if fac!=1.0:rawvals*=fac
+                    if off!=0.0:rawvals+=off
+                res['data'].update({varout:rawvals.tolist()})
             except:
-                  print('Failed to export values for variable %s'%(var))
-                  raise
+                print("Failed to export values for variable '%s'"%(var))
+                raise
         return res
 
     def json_dumps(self, indent=None, separators=None, mapping={}, attributes={},factor={},offset={}):
         """
         Dumps a JSON representation of the Dataset following the same conventions as ncdump.
-        Assumes the Dataset is CF complient.
+        Assumes the Dataset is CF compliant.
         """
         dico=self.to_dict(mapping,factor,offset)
         try:
@@ -83,7 +87,7 @@ if __name__ == '__main__':
     if len(sys.argv)<2:
         print 'Usage: pddataset.py csv_file [json_file]'
     else:
-        dataframe=pd.read_csv(sys.argv[1],header=4,index_col=0,parse_dates=True,converters={'WindDir':convert_winddir})
+        dataframe=pd.read_csv(sys.argv[1],header=4,index_col=0,parse_dates=True)
         df=PDDataset(dataframe)
         s=df.json_dumps(indent=2)
         if len(sys.argv)<3:
