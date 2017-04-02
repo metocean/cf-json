@@ -58,8 +58,8 @@ class PDDataset(pd.DataFrame):
                 if rawvals.dtype!=numpy.dtype('O'):
                     fac=factor.get(var,1.0)
                     off=offset.get(var,0.0)
-                    if fac!=1.0:rawvals*=fac
-                    if off!=0.0:rawvals+=off
+                    if fac!=1.0:rawvals=rawvals.astype('f')*fac
+                    if off!=0.0:rawvals=rawvals.astype('f')+off
                 res['data'].update({varout:rawvals.tolist()})
             except:
                 print("Failed to export values for variable '%s'"%(var))

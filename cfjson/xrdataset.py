@@ -54,8 +54,13 @@ class CFJSONinterface(object):
                 res['variables'][varout]={'attributes':OrderedDict()}
                 if len(vardims):res['variables'][varout]['dimensions']=vardims
                 for att in self._obj.variables[var].attrs:
-                    if att not in SPECIAL_ATTRS: 
-                        res['variables'][varout]['attributes'][att]=self._obj.variables[var].attrs[att]
+                    if att not in SPECIAL_ATTRS:
+                        newatt=self._obj.variables[var].attrs[att]
+                        try:
+                            newatt=float(newatt)
+                        except:
+                            newatt=str(newatt)
+                        res['variables'][varout]['attributes'][att]=newatt
             except:
                 print('Failed to export variable %s description or attributes'%(var))
                 raise
