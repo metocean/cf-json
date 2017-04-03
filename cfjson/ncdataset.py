@@ -175,7 +175,7 @@ if __name__ == '__main__':
         nc=NCDataset(sys.argv[1])
         s=nc.json_dumps(indent=2)
         if len(sys.argv)<3:
-            print s
+            print(s)
         else:
             f=open(sys.argv[2],'w')
             f.write(s)

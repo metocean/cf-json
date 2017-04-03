@@ -108,7 +108,7 @@ if __name__ == '__main__':
         nc=xr.open_dataset(sys.argv[1])
         s=nc.cfjson.json_dumps(indent=2)
         if len(sys.argv)<3:
-            print s
+            print(s)
         else:
             f=open(sys.argv[2],'w')
             f.write(s)
