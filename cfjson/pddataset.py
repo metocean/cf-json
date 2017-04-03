@@ -85,7 +85,7 @@ if __name__ == '__main__':
     convert_winddir=lambda d:WINDDIR[d] if d in WINDDR else d
     import sys
     if len(sys.argv)<2:
-        print 'Usage: pddataset.py csv_file [json_file]'
+        print('Usage: pddataset.py csv_file [json_file]')
     else:
         dataframe=pd.read_csv(sys.argv[1],header=4,index_col=0,parse_dates=True)
         df=PDDataset(dataframe)

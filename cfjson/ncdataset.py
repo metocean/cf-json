@@ -170,7 +170,7 @@ class NCDataset(Dataset):
 if __name__ == '__main__':
     import sys
     if len(sys.argv)<2:
-        print 'Usage: ncdataset.py netcdf_file [json_file]'
+        print('Usage: ncdataset.py netcdf_file [json_file]')
     else:
         nc=NCDataset(sys.argv[1])
         s=nc.json_dumps(indent=2)

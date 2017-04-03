@@ -103,7 +103,7 @@ class CFJSONinterface(object):
 if __name__ == '__main__':
     import sys
     if len(sys.argv)<2:
-        print 'Usage: xarray.py netcdf_file [json_file]'
+        print('Usage: xarray.py netcdf_file [json_file]')
     else:
         nc=xr.open_dataset(sys.argv[1])
         s=nc.cfjson.json_dumps(indent=2)
