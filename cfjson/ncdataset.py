@@ -114,7 +114,7 @@ class NCDataset(Dataset):
         Assumes the Dataset is CF complient.
         """
         dico=self.to_dict(mapping)
-        return json.dumps(dico, indent=indent, separators=separators)
+        return json.dumps(dico, indent=indent, separators=separators).replace('NaN','null')
 
     
     def from_json(self, js, mapping={}):

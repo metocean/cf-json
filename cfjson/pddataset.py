@@ -76,18 +76,15 @@ class PDDataset(pd.DataFrame):
             dico['global_attributes']=OrderedDict(attributes)
         except:
             print('Failed to export all global_attribute %s'%(att))
-        return json.dumps(dico, indent=indent, separators=separators)
+        return json.dumps(dico, indent=indent, separators=separators).replace('NaN','null')
 
                 
 if __name__ == '__main__':
-    WINDDIR={'N':0,'NNE':22.5,'NE':45,'ENE':67.5,'E':90,'ESE':112.5,'SE':135,'SSE':157.5,
-             'S':180,'SSW':202.5,'SW':225,'WSW':247.5,'W':270,'WNW':292.5,'NW':315,'NNW':337.5}
-    convert_winddir=lambda d:WINDDIR[d] if d in WINDDR else d
     import sys
     if len(sys.argv)<2:
         print('Usage: pddataset.py csv_file [json_file]')
     else:
-        dataframe=pd.read_csv(sys.argv[1],header=4,index_col=0,parse_dates=True)
+        dataframe=pd.read_csv(sys.argv[1],header=1,index_col=0,parse_dates=True)
         df=PDDataset(dataframe)
         s=df.json_dumps(indent=2)
         if len(sys.argv)<3:
