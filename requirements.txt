@@ -1,4 +1,0 @@
-#These are requirements to support all converters. Can just install specific if only one is needed.
-xarray >= 0.9.1
-pandas
-netCDF4
