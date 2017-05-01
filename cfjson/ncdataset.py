@@ -15,8 +15,6 @@ def print_val(val):
     """
     # Turn val into something JSON can deal with i.e. int, float or string
     """
-    if type(val) in [str, unicode]:
-        return str(val)
     if type(val) in [bool, numpy.bool, numpy.bool_]:
         return bool(val)
     if type(val) in [int, numpy.int, numpy.int_, numpy.intc, numpy.intp, numpy.int8, numpy.int16, numpy.int32, numpy.int64, numpy.uint8, numpy.uint16, numpy.uint32, numpy.uint64]:
@@ -26,7 +24,7 @@ def print_val(val):
     if type(val) in [complex, numpy.complex, numpy.complex_, numpy.complex64, numpy.complex128]:
         return [float(val.real),float(val.imag)]
     else:
-        return str(type(val))
+        return str(val)
 
     
     
@@ -91,7 +89,7 @@ class NCDataset(Dataset):
                 if var=='dum1':
                     continue
                 self.variables[var].set_auto_mask(True)
-                rawvals=numpy.ma.array(self.variables[var][:]).filled(numpy.nan).squeeze()
+                rawvals=numpy.ma.array(self.variables[var][:]).filled(numpy.NaN).squeeze()
                 if var == 'time' and 'units' in self.variables[var].ncattrs():
                     if 'calendar' in self.variables[var].ncattrs():
                         vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in num2date(rawvals, self.variables[var].getncattr('units'),
