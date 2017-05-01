@@ -96,7 +96,7 @@ class CFJSONinterface(object):
             dico['global_attributes'].update(attributes)
         except:
             print('Failed to set global_attributes %s'%(attributes))
-        return json.dumps(dico, indent=indent, separators=separators)
+        return json.dumps(dico, indent=indent, separators=separators).replace('NaN','null')
     
 
 
