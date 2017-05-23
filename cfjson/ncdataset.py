@@ -89,7 +89,7 @@ class NCDataset(Dataset):
                 if var=='dum1':
                     continue
                 self.variables[var].set_auto_mask(True)
-                rawvals=numpy.ma.array(self.variables[var][:]).filled(numpy.NaN).squeeze()
+                rawvals=numpy.ma.array(self.variables[var][:]).filled(numpy.nan).squeeze()
                 if var == 'time' and 'units' in self.variables[var].ncattrs():
                     if 'calendar' in self.variables[var].ncattrs():
                         vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in num2date(rawvals, self.variables[var].getncattr('units'),
