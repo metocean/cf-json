@@ -92,12 +92,14 @@ class NCDataset(Dataset):
                 rawvals=numpy.ma.array(self.variables[var][:]).filled(numpy.nan).squeeze()
                 if var == 'time' and 'units' in self.variables[var].ncattrs():
                     if 'calendar' in self.variables[var].ncattrs():
-                        vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in num2date(rawvals, self.variables[var].getncattr('units'),
-                        self.variables[var].getncattr('calendar'))]
-                        res['data'].update({varout:vals})
+                        times=num2date(rawvals, self.variables[var].getncattr('units'),
+                                       self.variables[var].getncattr('calendar'))
                     else:
-                        vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in num2date(rawvals, self.variables[var].getncattr('units'))]
-                        res['data'].update({varout:vals})
+                        times=num2date(rawvals, self.variables[var].getncattr('units'))
+                    if not isinstance(times, numpy.ndarray):
+                        times=[times]
+                    vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in times]
+                    res['data'].update({varout:vals})
                 else:
                     res['data'].update({varout:rawvals.tolist()})
             except:
