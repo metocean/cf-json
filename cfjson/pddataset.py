@@ -49,7 +49,7 @@ class PDDataset(pd.DataFrame):
         for special_var in AXIS_VAR:
             if special_var in self.columns:
                 res['data'][special_var]=None
-        timevals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in self.index.astype(datetime.datetime)]
+        timevals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in self.index.to_pydatetime()]
         res['data']['time']=timevals
         for var in self.columns:
             varout=mapping.get(var,var)
