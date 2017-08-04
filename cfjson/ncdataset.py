@@ -48,9 +48,9 @@ class NCDataset(Dataset):
             print('Failed to export dimensions')
             raise
         try:
-            res['global_attributes']=OrderedDict()
+            res['attributes']=OrderedDict()
             for att in self.ncattrs():
-                res['global_attributes'].update({str(att):print_val(self.getncattr(att))})
+                res['attributes'].update({str(att):print_val(self.getncattr(att))})
         except:
             print('Failed to export all global_attribute %s'%(att))
         res['variables']=OrderedDict()
@@ -65,13 +65,14 @@ class NCDataset(Dataset):
                     continue
                 if var=='time':
                     res['variables']['time']={
-                        'dimensions':['time'],
+                        'shape':['time'],
+                        'type': 'string',
                         'attributes':{'units':'ISO8601 timestamps'}    
                     }
                     continue
                 vardims=[d for d in self.variables[var].dimensions if d in res['dimensions']]
                 res['variables'][varout]={'attributes':OrderedDict()}
-                if len(vardims):res['variables'][varout]['dimensions']=vardims
+                if len(vardims):res['variables'][varout]['shape']=vardims
                 for att in self.variables[var].ncattrs():
                     if att not in ['missing_value','cell_methods']: 
                         res['variables'][varout]['attributes'].update({str(att):print_val(self.variables[var].getncattr(att))})
@@ -79,10 +80,6 @@ class NCDataset(Dataset):
                 print('Failed to export variable %s description or attributes'%(var))
                 raise
 
-        res['data']=OrderedDict()
-        for special_var in AXIS_VAR:
-            if special_var in self.variables:
-                res['data'][special_var]=None
         for var in self.variables:
             varout=mapping.get(var,var)
             try:
@@ -99,9 +96,9 @@ class NCDataset(Dataset):
                     if not isinstance(times, numpy.ndarray):
                         times=[times]
                     vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in times]
-                    res['data'].update({varout:vals})
+                    res['variables'][varout]['data']=vals
                 else:
-                    res['data'].update({varout:rawvals.tolist()})
+                    res['variables'][varout]['data']=rawvals.tolist()
             except:
                   print('Failed to export values for variable %s'%(var))
                   raise

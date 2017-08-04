@@ -19,7 +19,18 @@ def write_file(filename,json):
 
 def read_file(filename):
     with open(filename) as f:
-        json.loads(f.read())
+        jsonstr=f.read()
+        print jsonstr
+    return json.loads(jsonstr)
+
+def check_required(obj):
+    assert 'attributes' in obj
+    assert 'dimensions' in obj
+    assert 'variables' in obj
+    for v in obj['variables']:
+        assert 'data' in obj['variables'][v]
+        assert 'shape' in obj['variables'][v]
+        assert 'attributes' in obj['variables'][v]
 
 class TestNCDataset(unittest.TestCase):
     def test_dumps(self):

@@ -29,8 +29,8 @@ class CFJSONinterface(object):
             raise
         
         try:
-            res['global_attributes']=OrderedDict()
-            res['global_attributes'].update(self._obj.attrs)
+            res['attributes']=OrderedDict()
+            res['attributes'].update(self._obj.attrs)
         except:
             print('Failed to export all global_attribute %s'%(att))
             
@@ -41,18 +41,18 @@ class CFJSONinterface(object):
                 res['variables'][special_var]=None
         for var in self._obj.variables:
             try:
-                if var=='dum1': #This is UDS artefact
+                if var=='dum1': #This is a UDS artefact
                     continue
                 if var=='time':
                     res['variables']['time']={
-                        'dimensions':['time'],
+                        'shape':['time'],
                         'attributes':{'units':'ISO8601 timestamps'}    
                     }
                     continue
                 vardims=[d for d in self._obj.variables[var].dims if d in res['dimensions']]
                 varout=mapping.get(var,var)
                 res['variables'][varout]={'attributes':OrderedDict()}
-                if len(vardims):res['variables'][varout]['dimensions']=vardims
+                if len(vardims):res['variables'][varout]['shape']=vardims
                 for att in self._obj.variables[var].attrs:
                     if att not in SPECIAL_ATTRS:
                         newatt=self._obj.variables[var].attrs[att]
@@ -65,10 +65,6 @@ class CFJSONinterface(object):
                 print('Failed to export variable %s description or attributes'%(var))
                 raise
 
-        res['data']=OrderedDict()
-        for special_var in AXIS_VAR:
-            if special_var in self._obj.variables:
-                res['data'][special_var]=None
         for var in self._obj.variables:
             varout=mapping.get(var,var)
             try:
@@ -77,9 +73,9 @@ class CFJSONinterface(object):
                 rawvals=self._obj.variables[var].values.squeeze()
                 if var == 'time':
                     vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in to_datetime(rawvals)]
-                    res['data'][varout]=vals
+                    res['variables'][varout]['data']=vals
                 else:
-                    res['data'][varout]=rawvals.tolist()
+                    res['variables'][varout]['data']=rawvals.tolist()
             except:
                   print('Failed to export values for variable %s'%(var))
                   raise
@@ -93,9 +89,9 @@ class CFJSONinterface(object):
         """
         dico=self.to_dict(mapping)
         try:
-            dico['global_attributes'].update(attributes)
+            dico['attributes'].update(attributes)
         except:
-            print('Failed to set global_attributes %s'%(attributes))
+            print('Failed to set global attributes %s'%(attributes))
         return json.dumps(dico, indent=indent, separators=separators).replace('NaN','null')
     
 

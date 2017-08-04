@@ -40,17 +40,13 @@ class PDDataset(pd.DataFrame):
             try:
                 res['variables'][varout]=OrderedDict({'attributes':{'standard_name':varout}})
                 vardims=['time']
-                if len(vardims):res['variables'][varout]['dimensions']=vardims
+                if len(vardims):res['variables'][varout]['shape']=vardims
             except:
                 print('Failed to export variable %s description or attributes'%(var))
                 raise
 
-        res['data']=OrderedDict()
-        for special_var in AXIS_VAR:
-            if special_var in self.columns:
-                res['data'][special_var]=None
-        timevals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in self.index.to_pydatetime()]
-        res['data']['time']=timevals
+        timevals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in self.index.astype(datetime.datetime)]
+        res['variables']['time']['data']=timevals
         for var in self.columns:
             varout=mapping.get(var,var)
             try:
@@ -60,7 +56,7 @@ class PDDataset(pd.DataFrame):
                     off=offset.get(var,0.0)
                     if fac!=1.0:rawvals=rawvals.astype('f')*fac
                     if off!=0.0:rawvals=rawvals.astype('f')+off
-                res['data'].update({varout:rawvals.tolist()})
+                res[varout]['data']=rawvals.tolist()
             except:
                 print("Failed to export values for variable '%s'"%(var))
                 raise
@@ -73,9 +69,9 @@ class PDDataset(pd.DataFrame):
         """
         dico=self.to_dict(mapping,factor,offset)
         try:
-            dico['global_attributes']=OrderedDict(attributes)
+            dico['attributes']=OrderedDict(attributes)
         except:
-            print('Failed to export all global_attribute %s'%(att))
+            print('Failed to export all global attributes %s'%(att))
         return json.dumps(dico, indent=indent, separators=separators).replace('NaN','null')
 
                 
