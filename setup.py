@@ -3,7 +3,7 @@ import sys
 from setuptools import setup
 
 NAME = "cfjson"
-VERSION = "0.1"
+VERSION = "0.2"
 
 # To install the library, run the following
 #
