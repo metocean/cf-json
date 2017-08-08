@@ -45,7 +45,7 @@ class PDDataset(pd.DataFrame):
                 print('Failed to export variable %s description or attributes'%(var))
                 raise
 
-        timevals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in self.index.astype(datetime.datetime)]
+        timevals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in self.index.to_pydatetime()]
         res['variables']['time']={
             'shape':['time'],
             'attributes':{'units':'ISO8601'},
