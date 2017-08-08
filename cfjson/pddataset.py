@@ -46,7 +46,12 @@ class PDDataset(pd.DataFrame):
                 raise
 
         timevals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in self.index.astype(datetime.datetime)]
-        res['variables']['time']['data']=timevals
+        res['variables']['time']={
+            'shape':['time'],
+            'attributes':{'units':'ISO8601'},
+            'type':'string',
+            'data':timevals
+        }
         for var in self.columns:
             varout=mapping.get(var,var)
             try:
@@ -56,7 +61,7 @@ class PDDataset(pd.DataFrame):
                     off=offset.get(var,0.0)
                     if fac!=1.0:rawvals=rawvals.astype('f')*fac
                     if off!=0.0:rawvals=rawvals.astype('f')+off
-                res[varout]['data']=rawvals.tolist()
+                res['variables'][varout]['data']=rawvals.tolist()
             except:
                 print("Failed to export values for variable '%s'"%(var))
                 raise
