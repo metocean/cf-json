@@ -1,6 +1,7 @@
 import json
 from json import encoder
 import xarray as xr
+import numpy as np
 from pandas import to_datetime
 from collections import OrderedDict
 
@@ -70,7 +71,7 @@ class CFJSONinterface(object):
             try:
                 if var=='dum1':
                     continue
-                rawvals=self._obj.variables[var].values.squeeze()
+                rawvals=np.atleast_1d(self._obj.variables[var].values.squeeze())
                 if var == 'time':
                     vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in to_datetime(rawvals)]
                     res['variables'][varout]['data']=vals
