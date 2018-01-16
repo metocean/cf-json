@@ -73,9 +73,17 @@ class CFJSONinterface(object):
                     continue
                 rawvals=np.atleast_1d(self._obj.variables[var].values.squeeze())
                 if var == 'time':
+                    # Not sure what type is appropriate here... but any cfjson
+                    # parser will probably have to handle time variables as a
+                    # special case anyway, so it might just be ignored?
+                    res['variables'][varout]['type']='string'
+
                     vals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in to_datetime(rawvals)]
                     res['variables'][varout]['data']=vals
                 else:
+                    # Possibly better if we translated to netCDF data types?
+                    res['variables'][varout]['type']=type(rawvals[0]).__name__
+
                     res['variables'][varout]['data']=rawvals.tolist()
             except:
                   print('Failed to export values for variable %s'%(var))
