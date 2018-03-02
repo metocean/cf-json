@@ -132,38 +132,42 @@ class NCDataset(Dataset):
             raise
             
         try:
-            self.setncatts(dico['global_attributes'])
+            self.setncatts(dico['attributes'])
         except:
             print('Issue occured when inserting global attributes')
 
         
         for var in dico['variables']:
-            try:
-                if '_FillValue' in dico['variables'][var]['attributes']:
-                    self.createVariable(var, dico['variables'][var]['type'],
-                                        dimensions=dico['variables'][var]['dimensions'],
-                                        fill_value=dico['variables'][var]['attributes']['_FillValue'])
-                else:
-                    self.createVariable(var, dico['variables'][var]['type'],
-                                        dimensions=dico['variables'][var]['dimensions'])
-            except:
-                print('Could not create variable %s'%var)
-                raise
-
-            for att in dico['variables'][var]['attributes']:
+            if var == 'time':
+                pass
+            else:
                 try:
-                    if att != '_FillValue':
-                        self.variables[var].setncattr(att, dico['variables'][var]['attributes'][att])
+                    if '_FillValue' in dico['variables'][var]['attributes']:
+                        self.createVariable(var, dico['variables'][var]['type'],
+                                            dimensions=dico['variables'][var]['dimensions'],
+                                            fill_value=dico['variables'][var]['attributes']['_FillValue'])
+                    else:
+                        self.createVariable(var, dico['variables'][var]['type'],
+                                            dimensions=dico['variables'][var]['shape'])
                 except:
-                    print('Failed to set variable %s attribute %s to %s'%(var,
-                                                                          att,
-                                                                          str(dico['variables'][var]['attributes'][att])))
-                        
-            try:
-                self.variables[var][:]=numpy.array(dico['data'][var]).reshape(self.variables[var].shape)
-            except:
-                print('Could not populate variable %s'%var)
-                
+                    print('Could not create variable %s'%var)
+                    raise
+
+                for att in dico['variables'][var]['attributes']:
+                    try:
+                        if att != '_FillValue':
+                            self.variables[var].setncattr(att, dico['variables'][var]['attributes'][att])
+                    except:
+                        print('Failed to set variable %s attribute %s to %s'%(var,
+                                                                              att,
+                                                                              str(dico['variables'][var]['attributes'][att])))
+
+                try:
+                    self.variables[var][:]=numpy.array(dico['variables'][var]['data']).reshape(self.variables[var].shape)
+                except:
+                    print('Could not populate variable %s'%var)
+
+
 if __name__ == '__main__':
     import sys
     if len(sys.argv)<2:
