@@ -5,6 +5,9 @@ import numpy as np
 from pandas import to_datetime
 from collections import OrderedDict
 import dateutil
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 encoder.FLOAT_REPR = lambda o: format(o, '.4g')
 
@@ -106,22 +109,30 @@ class CFJSONinterface(object):
             print('Could not decode JSON')
             raise
 
-        # Copy global attributes
-        for k,v in dico['attributes'].iteritems():
-            self._obj.attrs[k] = v
+        if 'attributes' in dico.keys():
+            # Copy global attributes
+            logging.debug('copying global attributes: {}'.format(dico['attributes'].items()))
+            for k,v in dico['attributes'].iteritems():
+                self._obj.attrs[k] = v
+        else:
+            logging.debug('no global attributes found')
 
         # Copy variables and their attributes and dimensions
         for varname,var in dico['variables'].iteritems():
+            logging.debug('copying variable "{}" data'.format(varname))
             # Ideally we'd use udunits to find "time" variables, but tricky in
             # Python (cf_units doesn't seem to provide utScan or utIsTime)...
             if 'units' in var['attributes'] and var['attributes']['units'] == 'ISO8601 timestamps':
                 time_strings = var['data']
+                logging.debug('units string indicates time variable, converting to datetime64')
                 time_dt = [dateutil.parser.parse(tx) for tx in time_strings]
                 self._obj[varname] = (var['shape'], time_dt)
+                logging.debug('copying variable "{}" attributes: {}'.format(varname, var['attributes'].items()))
                 self._obj[varname].attrs = var['attributes']
                 self._obj[varname].attrs['units'] = 'Python datetime64 objects'
             else:
                 self._obj[varname] = (var['shape'], var['data'])
+                logging.debug('copying variable "{}" attributes: {}'.format(varname, var['attributes'].items()))
                 self._obj[varname].attrs = var['attributes']
 
 
