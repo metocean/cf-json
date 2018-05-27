@@ -7,7 +7,7 @@ from collections import OrderedDict
 import dateutil
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig()
 
 encoder.FLOAT_REPR = lambda o: format(o, '.4g')
 
@@ -103,11 +103,15 @@ class CFJSONinterface(object):
     def from_json(self, js):
         """Convert CF-JSON string to xarray Dataset
         """
-        try:
-            dico = json.JSONDecoder(object_pairs_hook=OrderedDict).decode(js)
-        except:
-            print('Could not decode JSON')
-            raise
+
+        if isinstance(js, basestring):
+            try:
+                dico = json.JSONDecoder(object_pairs_hook=OrderedDict).decode(js)
+            except:
+                print('Could not decode JSON')
+                raise
+        else:
+            dico = js
 
         if 'attributes' in dico.keys():
             # Copy global attributes
