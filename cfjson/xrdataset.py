@@ -101,14 +101,14 @@ class CFJSONinterface(object):
     
 
     def from_json(self, js):
-        """Convert CF-JSON string to xarray Dataset
+        """Convert CF-JSON string or dictionary to xarray Dataset
         """
 
         if isinstance(js, basestring):
             try:
                 dico = json.JSONDecoder(object_pairs_hook=OrderedDict).decode(js)
             except:
-                print('Could not decode JSON')
+                print('Could not decode JSON string')
                 raise
         else:
             dico = js
