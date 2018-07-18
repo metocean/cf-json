@@ -6,6 +6,7 @@ from pandas import to_datetime
 from collections import OrderedDict
 import dateutil
 import logging
+import six
 
 logging.basicConfig()
 
@@ -104,7 +105,7 @@ class CFJSONinterface(object):
         """Convert CF-JSON string or dictionary to xarray Dataset
         """
 
-        if isinstance(js, basestring):
+        if isinstance(js, six.string_types):
             try:
                 dico = json.JSONDecoder(object_pairs_hook=OrderedDict).decode(js)
             except:
@@ -116,13 +117,13 @@ class CFJSONinterface(object):
         if 'attributes' in dico.keys():
             # Copy global attributes
             logging.debug('copying global attributes: {}'.format(dico['attributes'].items()))
-            for k,v in dico['attributes'].iteritems():
+            for k,v in six.iteritems(dico['attributes']):
                 self._obj.attrs[k] = v
         else:
             logging.debug('no global attributes found')
 
         # Copy variables and their attributes and dimensions
-        for varname,var in dico['variables'].iteritems():
+        for varname,var in six.iteritems(dico['variables']):
             logging.debug('copying variable "{}" data'.format(varname))
             # Ideally we'd use udunits to find "time" variables, but tricky in
             # Python (cf_units doesn't seem to provide utScan or utIsTime)...
