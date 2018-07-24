@@ -4,6 +4,11 @@ import xarray as xr
 import numpy as np
 from pandas import to_datetime
 from collections import OrderedDict
+import dateutil
+import logging
+import six
+
+logging.basicConfig()
 
 encoder.FLOAT_REPR = lambda o: format(o, '.4g')
 
@@ -95,6 +100,46 @@ class CFJSONinterface(object):
             print('Failed to set global attributes %s'%(attributes))
         return json.dumps(dico, indent=indent, separators=separators).replace('NaN','null')
     
+
+    def from_json(self, js):
+        """Convert CF-JSON string or dictionary to xarray Dataset
+        """
+
+        if isinstance(js, six.string_types):
+            try:
+                dico = json.JSONDecoder(object_pairs_hook=OrderedDict).decode(js)
+            except:
+                print('Could not decode JSON string')
+                raise
+        else:
+            dico = js
+
+        if 'attributes' in dico.keys():
+            # Copy global attributes
+            logging.debug('copying global attributes: {}'.format(dico['attributes'].items()))
+            for k,v in six.iteritems(dico['attributes']):
+                self._obj.attrs[k] = v
+        else:
+            logging.debug('no global attributes found')
+
+        # Copy variables and their attributes and dimensions
+        for varname,var in six.iteritems(dico['variables']):
+            logging.debug('copying variable "{}" data'.format(varname))
+            # Ideally we'd use udunits to find "time" variables, but tricky in
+            # Python (cf_units doesn't seem to provide utScan or utIsTime)...
+            if 'units' in var['attributes'] and var['attributes']['units'] == 'ISO8601 timestamps':
+                time_strings = var['data']
+                logging.debug('units string indicates time variable, converting to datetime64')
+                time_dt = [dateutil.parser.parse(tx) for tx in time_strings]
+                self._obj[varname] = (var['shape'], time_dt)
+                logging.debug('copying variable "{}" attributes: {}'.format(varname, var['attributes'].items()))
+                self._obj[varname].attrs = var['attributes']
+                self._obj[varname].attrs['units'] = 'Python datetime64 objects'
+            else:
+                self._obj[varname] = (var['shape'], var['data'])
+                logging.debug('copying variable "{}" attributes: {}'.format(varname, var['attributes'].items()))
+                self._obj[varname].attrs = var['attributes']
+
 
 
 if __name__ == '__main__':
