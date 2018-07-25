@@ -103,6 +103,13 @@ class CFJSONinterface(object):
 
     def from_json(self, js):
         """Convert CF-JSON string or dictionary to xarray Dataset
+        Example:
+        import xarray as xr
+        from cfjson import xrdataset
+        cfjson_string = '{"dimensions": {"time": 1}, "variables": {"x": {"shape": ["time"], "data": [1], "attributes": {}}}}'
+        dataset = xr.Dataset()
+        dataset.cfjson.from_json(cfjson_string)
+
         """
 
         if isinstance(js, six.string_types):
