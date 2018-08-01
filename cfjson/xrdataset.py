@@ -10,7 +10,7 @@ import six
 
 logging.basicConfig()
 
-encoder.FLOAT_REPR = lambda o: format(o, '.4g')
+encoder.FLOAT_REPR = lambda o: format(o, '.4f').rstrip('0').rstrip('.')
 
 AXIS_VAR=['time','lat','latitude','lon','longitude','site']
 SPECIAL_ATTRS=['missing_value','cell_methods']

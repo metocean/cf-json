@@ -6,7 +6,7 @@ import pandas as pd
 from json import encoder
 from collections import OrderedDict
 
-encoder.FLOAT_REPR = lambda o: format(o, '.4g')
+encoder.FLOAT_REPR = lambda o: format(o, '.4f').rstrip('0').rstrip('.')
 
 AXIS_VAR=['time','lat','latitude','lon','longitude','site']
     
