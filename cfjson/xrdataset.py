@@ -145,6 +145,17 @@ class CFJSONinterface(object):
             else:
                 self._obj[varname] = (var['shape'], var['data'])
                 logging.debug('copying variable "{}" attributes: {}'.format(varname, var['attributes'].items()))
+                # Some cases result in a dtype=object array with None elements,
+                # but if this is just due to a mix of "null" and numeric values,
+                # we can avoid some downstream problems by casting now, which
+                # should also convert any None values to numpy NaN.
+                if self._obj[varname].dtype == 'O':
+                    dtype_set = set([type(el) for el in self._obj[varname].data.flatten()])
+                    if str not in dtype_set:
+                        if float not in dtype_set:
+                            logging.warning('casting to float to preserve None / NaN, but no floats in original data')
+                        self._obj[varname] = self._obj[varname].astype(float)
+
                 self._obj[varname].attrs = var['attributes']
 
 
