@@ -153,7 +153,7 @@ class CFJSONinterface(object):
                     dtype_set = set([type(el) for el in self._obj[varname].data.flatten()])
                     if str not in dtype_set:
                         if float not in dtype_set:
-                            logging.warning('casting to float to preserve None / NaN, but no floats in original data')
+                            logging.warning('casting variable "{}" to float to preserve None / NaN, but no floats in original data'.format(varname))
                         self._obj[varname] = self._obj[varname].astype(float)
 
                 self._obj[varname].attrs = var['attributes']
