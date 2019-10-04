@@ -58,7 +58,10 @@ class CFJSONinterface(object):
                 vardims=[d for d in self._obj.variables[var].dims if d in res['dimensions']]
                 varout=mapping.get(var,var)
                 res['variables'][varout]={'attributes':OrderedDict()}
-                if len(vardims):res['variables'][varout]['shape']=vardims
+                if vardims:
+                    res['variables'][varout]['shape'] = vardims
+                else:
+                    res['variables'][varout]['shape'] = []
                 for att in self._obj.variables[var].attrs:
                     if att not in SPECIAL_ATTRS:
                         newatt=self._obj.variables[var].attrs[att]
@@ -143,7 +146,10 @@ class CFJSONinterface(object):
                 self._obj[varname].attrs = var['attributes']
                 self._obj[varname].attrs['units'] = 'Python datetime64 objects'
             else:
-                self._obj[varname] = (var['shape'], var['data'])
+                if var['shape']:
+                    self._obj[varname] = (var['shape'], var['data'])
+                else:
+                    self._obj[varname] = (var['shape'], var['data'][0])
                 logging.debug('copying variable "{}" attributes: {}'.format(varname, var['attributes'].items()))
                 # Some cases result in a dtype=object array with None elements,
                 # but if this is just due to a mix of "null" and numeric values,
