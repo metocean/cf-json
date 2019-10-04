@@ -1,3 +1,4 @@
+/.tox/
 .pytest_cache
 *.pyc
 *.html
