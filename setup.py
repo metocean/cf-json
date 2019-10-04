@@ -14,6 +14,11 @@ VERSION = "0.2"
 
 REQUIRES = ["netcdf4"]
 
+tests_require = [
+    "netCDF4",
+    "pandas",
+    "xarray>=0.9.1"]
+
 setup(
     name=NAME,
     version=VERSION,
@@ -22,6 +27,7 @@ setup(
     keywords=["CF-JSON"],
     packages=[NAME],
     requires=REQUIRES,
+    tests_require=tests_require,
     long_description="""\
     Classes and functions for CF-JSON format conversion
     """
