@@ -147,9 +147,20 @@ class CFJSONinterface(object):
                 self._obj[varname].attrs['units'] = 'Python datetime64 objects'
             else:
                 if var['shape']:
+                    # shape=['dim1'] (in contrast to shape=[])
                     self._obj[varname] = (var['shape'], var['data'])
                 else:
-                    self._obj[varname] = (var['shape'], var['data'][0])
+                    # shape=[] is allowed, but a bit more tricky...
+                    if isinstance(var['data'], list):
+                        if len(var['data']) > 1:
+                            msg = 'len(data) > 1 not allowed with empty / missing shape; varname: {}'.format(varname)
+                            raise Exception(msg)
+                        # shape=[] with data=[1.2] (in contrast to data=1.2)
+                        self._obj[varname] = (var['shape'], var['data'][0])
+                    else:
+                        # shape=[] with data=1.2 (in contrast to data=[1.2])
+                        self._obj[varname] = (var['shape'], var['data'])
+                        # TODO: is shape=[] with data=[] allowed and needs to be handled?
                 logging.debug('copying variable "{}" attributes: {}'.format(varname, var['attributes'].items()))
                 # Some cases result in a dtype=object array with None elements,
                 # but if this is just due to a mix of "null" and numeric values,
