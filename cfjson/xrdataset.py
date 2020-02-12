@@ -1,3 +1,4 @@
+import datetime as dt
 import json
 from json import encoder
 import xarray as xr
@@ -141,6 +142,13 @@ class CFJSONinterface(object):
                 time_strings = var['data']
                 logging.debug('units string indicates time variable, converting to datetime64')
                 time_dt = [dateutil.parser.parse(tx) for tx in time_strings]
+                # If timezone information was provided (e.g., "Z")
+                if any([t.utcoffset() is not None for t in time_dt]):
+                    if all([t.utcoffset() == dt.timedelta(0) for t in time_dt]):
+                        # Timezone-aware, even if they're all the same timezone, would lead to dtype=object
+                        time_dt = [t.replace(tzinfo=None) for t in time_dt]
+                    else:
+                        logging.warning('Mixed timezones (or mixed naive / aware) in input, may lead to dtype=object in output')
                 self._obj[varname] = (var['shape'], time_dt)
                 logging.debug('copying variable "{}" attributes: {}'.format(varname, var['attributes'].items()))
                 self._obj[varname].attrs = var['attributes']
