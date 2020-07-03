@@ -3,7 +3,7 @@ import sys
 from setuptools import setup
 
 NAME = "cfjson"
-VERSION = "0.3.4"
+VERSION = "0.3.5"
 
 # To install the library, run the following
 #
@@ -32,4 +32,3 @@ setup(
     Classes and functions for CF-JSON format conversion
     """
 )
-

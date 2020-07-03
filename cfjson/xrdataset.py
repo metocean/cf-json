@@ -136,6 +136,9 @@ class CFJSONinterface(object):
         # Copy variables and their attributes and dimensions
         for varname,var in six.iteritems(dico['variables']):
             logging.debug('copying variable "{}" data'.format(varname))
+            if "shape" not in var.keys():
+                logging.warning("missing shape (required by CF-JSON spec >=0.2)")
+                var["shape"] = []
             # Ideally we'd use udunits to find "time" variables, but tricky in
             # Python (cf_units doesn't seem to provide utScan or utIsTime)...
             if 'units' in var['attributes'] and var['attributes']['units'] == 'ISO8601 timestamps':
