@@ -1,5 +1,5 @@
 # cf-json
-MetOcean's Python package to import / export CF-JSON data
+Python package to import / export CF-JSON data
 
 See also: https://github.com/cf-json/cf-json.github.io (which is the source for http://cf-json.org/).
 
