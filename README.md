@@ -6,16 +6,54 @@ See also: https://github.com/cf-json/cf-json.github.io (which is the source for 
 Comment 2020-06-15: I'd really only trust the xarray methods at the moment, the other two have been neglected... So I'd recommend using those from here, and then xarray's own to_pandas, to_netcdf, etc. if required.
 
 
-The basic idea is to pretty print CF-NetCDF as a JSON dictionary with arrays following CF-NetCDF ordering conventions.
+## Example
 
-As with CF-NetCDF, the schema has 3 main sections:
-1. dimensions - dictionary of data dimensions definign their length
-2. variables - dictionary of variables definition with dimensions and other attributes.
-3. data - dictionary of data keyed by variable id with data in arrays of shape coirresponding to dimensions
+```python3
+Python 3.8.3 (default, May 17 2020, 18:15:42)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.15.0 -- An enhanced Interactive Python. Type '?' for help.
 
-Numeric data should be expressed as numbers, text data as strings. null should be used to represent NaN. A missing_value or \_FillValue attribute can be defined as with CF-NetCDF.  
+In [1]: import xarray as xr
+   ...: from cfjson.xrdataset import CFJSONinterface
+   ...: dset = xr.Dataset(data_vars={'hmo': ('time', [0.5, 0.6, 0.7])}, coords={'time': [1, 2, 3]})
+   ...: dset['hmo'].attrs = {'standard_name': 'sea_surface_wave_significant_height', 'units': 'm'}
+   ...: dset['time'].attrs = {'standard_name': 'time', 'units': 'days since 2020-01-01'}
+   ...: print(dset.cfjson.json_dumps())
+{
+  "dimensions": {
+    "time": 3
+  },
+  "attributes": {},
+  "variables": {
+    "time": {
+      "shape": [
+        "time"
+      ],
+      "attributes": {
+        "units": "ISO8601 timestamps"
+      },
+      "data": [
+        "1970-01-01T00:00:00Z",
+        "1970-01-01T00:00:00Z",
+        "1970-01-01T00:00:00Z"
+      ]
+    },
+    "hmo": {
+      "attributes": {
+        "standard_name": "sea_surface_wave_significant_height",
+        "units": "m"
+      },
+      "shape": [
+        "time"
+      ],
+      "data": [
+        0.5,
+        0.6,
+        0.7
+      ]
+    }
+  }
+}
 
-CF-JSON has a number of recommendations outside CF-netcdf:
-1. Singleton dimensions should be squashed
-2. Any number of global attributes can be added at the top level of the JSON document, but must not use the reserved keys "variables","dimensions" or "data".
-3. Each variable should have a standard_name field that defines the cf-conventions standard name
+In [2]:
+```
