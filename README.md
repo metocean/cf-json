@@ -36,3 +36,19 @@ In [2]: pp.pprint(json.loads(dset.cfjson.json_dumps()))
 
 In [3]:
 ```
+
+## License
+
+Copyright 2017, 2018 MetOcean Solutions Ltd.  
+Copyright 2019-2020 MetOcean Solutions / Meteorological Service of New Zealand Ltd.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+the content of this repository except in compliance with the License. See the
+file [LICENSE](LICENSE) for details. You may also obtain a copy of the
+License at
+[https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations under the License.
