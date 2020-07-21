@@ -39,7 +39,7 @@ In [3]:
 
 ## License
 
-Copyright 2017, 2018 MetOcean Solutions Ltd.
+Copyright 2017, 2018 MetOcean Solutions Ltd.  
 Copyright 2019-2020 MetOcean Solutions / Meteorological Service of New Zealand Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
