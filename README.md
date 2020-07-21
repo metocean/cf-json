@@ -44,7 +44,7 @@ Copyright 2019-2020 MetOcean Solutions / Meteorological Service of New Zealand L
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 the content of this repository except in compliance with the License. See the
-file [LICENSE.txt](LICENSE.txt) for details. You may also obtain a copy of the
+file [LICENSE](LICENSE) for details. You may also obtain a copy of the
 License at
 [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
