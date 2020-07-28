@@ -48,7 +48,7 @@ class PDDataset(pd.DataFrame):
         timevals=[t.strftime('%Y-%m-%dT%H:%M:%SZ') for t in self.index.to_pydatetime()]
         res['variables']['time']={
             'shape':['time'],
-            'attributes':{'units':'ISO8601'},
+            'attributes':{'units':'ISO8601 datetimes'},
             'type':'string',
             'data':timevals
         }

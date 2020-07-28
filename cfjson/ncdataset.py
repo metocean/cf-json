@@ -67,7 +67,7 @@ class NCDataset(Dataset):
                     res['variables']['time']={
                         'shape':['time'],
                         'type': 'string',
-                        'attributes':{'units':'ISO8601 timestamps'}    
+                        'attributes':{'units':'ISO8601 datetimes'}
                     }
                     continue
                 vardims=[d for d in self.variables[var].dimensions if d in res['dimensions']]

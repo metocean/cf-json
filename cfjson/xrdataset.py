@@ -53,7 +53,7 @@ class CFJSONinterface(object):
                 if var=='time':
                     res['variables']['time']={
                         'shape':['time'],
-                        'attributes':{'units':'ISO8601 timestamps'}    
+                        'attributes':{'units':'ISO8601 datetimes'}
                     }
                     continue
                 vardims=[d for d in self._obj.variables[var].dims if d in res['dimensions']]
