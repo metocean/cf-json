@@ -141,16 +141,9 @@ class CFJSONinterface(object):
                 var["shape"] = []
             # Ideally we'd use udunits to find "time" variables, but tricky in
             # Python (cf_units doesn't seem to provide utScan or utIsTime)...
-            var_units = ''
-            if 'units' in var['attributes']:
-                var_units = var['attributes']['units']
-            elif 'units' in var:
-                # TODO: remove workaround for units outside of attributes when fixed in tide API
-                logging.warning('found units as top-level variable member, should be in "attributes"')
-                var_units = var['units']
-            if 'ISO8601' in var_units:
-                time_strings = var['data']
+            if 'units' in var['attributes'] and 'ISO8601' in var['attributes']['units']:
                 logging.debug('found "ISO8601" in units string, guessing time variable, converting to datetime64')
+                time_strings = var['data']
                 time_dt = [dateutil.parser.parse(tx) for tx in time_strings]
                 # If timezone information was provided (e.g., "Z")
                 if any([t.utcoffset() is not None for t in time_dt]):
