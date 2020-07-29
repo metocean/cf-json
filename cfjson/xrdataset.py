@@ -190,7 +190,6 @@ class CFJSONinterface(object):
                     else:
                         # shape=[] with data=1.2 (in contrast to data=[1.2])
                         self._obj[varname] = (var["shape"], var["data"])
-                        # TODO: is shape=[] with data=[] allowed and needs to be handled?
                 logging.debug(
                     'copying variable "{}" attributes: {}'.format(
                         varname, var["attributes"].items()
