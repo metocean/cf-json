@@ -1,9 +1,8 @@
 # coding: utf-8
-import sys
 from setuptools import setup
 
 NAME = "cfjson"
-VERSION = "0.3.5"
+VERSION = "0.3.6"
 
 # To install the library, run the following
 #
