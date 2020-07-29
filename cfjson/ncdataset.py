@@ -1,10 +1,10 @@
 import json
-import numpy
 import sys
-from json import encoder
 from collections import OrderedDict
-from netCDF4 import Dataset, num2date
+from json import encoder
 
+import numpy
+from netCDF4 import Dataset, num2date
 
 encoder.FLOAT_REPR = lambda o: format(o, ".4f").rstrip("0").rstrip(".")
 

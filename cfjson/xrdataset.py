@@ -1,13 +1,14 @@
 import datetime as dt
 import json
-from json import encoder
-import xarray as xr
-import numpy as np
-from pandas import to_datetime
-from collections import OrderedDict
-import dateutil
 import logging
+from collections import OrderedDict
+from json import encoder
+
+import dateutil
+import numpy as np
 import six
+import xarray as xr
+from pandas import to_datetime
 
 logging.basicConfig()
 

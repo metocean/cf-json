@@ -1,10 +1,11 @@
-import json
-import numpy
-import sys
 import datetime
-import pandas as pd
-from json import encoder
+import json
+import sys
 from collections import OrderedDict
+from json import encoder
+
+import numpy
+import pandas as pd
 
 encoder.FLOAT_REPR = lambda o: format(o, ".4f").rstrip("0").rstrip(".")
 
