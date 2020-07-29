@@ -1,3 +1,5 @@
+"""Xarray dataset accessor to import / export CF-JSON."""
+
 import datetime as dt
 import json
 import logging
@@ -20,12 +22,17 @@ SPECIAL_ATTRS = ["missing_value", "cell_methods"]
 
 @xr.register_dataset_accessor("cfjson")
 class CFJSONinterface(object):
+    """Xarray dataset accessor to import / export CF-JSON."""
+
     def __init__(self, xarray_obj):
+        """Xarray dataset accessor to import / export CF-JSON."""
         self._obj = xarray_obj
 
     def to_dict(self, mapping):
-        """
-        Dumps the dataset as an ordered dictionary following the same conventions as ncdump.
+        """Dump dataset as ordered dictionary.
+
+        Dumps the dataset as an ordered dictionary following the same
+        conventions as ncdump.
         """
         res = OrderedDict()
         try:
@@ -34,14 +41,14 @@ class CFJSONinterface(object):
                 if self._obj.dims[dim] > 1:
                     res["dimensions"][dim] = self._obj.dims[dim]
         except:
-            print("Failed to export dimensions")
+            logging.error("Failed to export dimensions")
             raise
 
         try:
             res["attributes"] = OrderedDict()
             res["attributes"].update(self._obj.attrs)
         except:
-            print("Failed to export all global_attribute %s" % (self._obj.attrs))
+            logging.error("Failed to export all global_attribute {}".format(self._obj.attrs))
 
         res["variables"] = OrderedDict()
         # Put axis variables first
@@ -99,9 +106,10 @@ class CFJSONinterface(object):
         return res
 
     def json_dumps(self, indent=2, separators=None, mapping={}, attributes={}):
-        """
-        Dumps a JSON representation of the Dataset following the same conventions as ncdump.
-        Assumes the Dataset is CF complient.
+        """Dump dataset as JSON string.
+
+        Dumps a JSON representation of the Dataset following the same
+        conventions as ncdump. Assumes the Dataset is CF complient.
         """
         dico = self.to_dict(mapping)
         try:
@@ -113,16 +121,18 @@ class CFJSONinterface(object):
         )
 
     def from_json(self, js):
-        """Convert CF-JSON string or dictionary to xarray Dataset
+        """Convert CF-JSON string or dictionary to xarray Dataset.
+
         Example:
         import xarray as xr
         from cfjson import xrdataset
-        cfjson_string = '{"dimensions": {"time": 1}, "variables": {"x": {"shape": ["time"], "data": [1], "attributes": {}}}}'
+        cfjson_string = '''
+            {"dimensions": {"time": 1},
+             "variables": {"x": {"shape": ["time"], "data": [1],
+                                 "attributes": {}}}}'''
         dataset = xr.Dataset()
         dataset.cfjson.from_json(cfjson_string)
-
         """
-
         if isinstance(js, six.string_types):
             try:
                 dico = json.JSONDecoder(object_pairs_hook=OrderedDict).decode(js)
