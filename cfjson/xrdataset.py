@@ -20,6 +20,8 @@ AXIS_VAR = ["time", "lat", "latitude", "lon", "longitude", "site"]
 SPECIAL_ATTRS = ["missing_value", "cell_methods"]
 
 
+# pylint: disable=useless-object-inheritance
+# We're still supporting Python 2.7, but I'm too lazy to run the old pylint :)
 @xr.register_dataset_accessor("cfjson")
 class CFJSONinterface(object):
     """Xarray dataset accessor to import / export CF-JSON."""
@@ -49,6 +51,7 @@ class CFJSONinterface(object):
             res["attributes"].update(self._obj.attrs)
         except:
             logging.error("Failed to export all global_attribute {}".format(self._obj.attrs))
+            raise
 
         res["variables"] = OrderedDict()
         # Put axis variables first
