@@ -41,7 +41,7 @@ class CFJSONinterface(object):
             res["attributes"] = OrderedDict()
             res["attributes"].update(self._obj.attrs)
         except:
-            print("Failed to export all global_attribute %s" % (att))
+            print("Failed to export all global_attribute %s" % (self._obj.attrs))
 
         res["variables"] = OrderedDict()
         # Put axis variables first
