@@ -11,23 +11,26 @@ VERSION = "0.3.6"
 # prerequisite: setuptools
 # http://pypi.python.org/pypi/setuptools
 
-REQUIRES = ["netcdf4"]
-
 tests_require = [
     "netCDF4",
     "pandas",
-    "xarray>=0.9.1"]
+    "xarray>=0.9.1",
+]
+
+install_requires = [
+    "xarray>=0.9.1",
+]
 
 setup(
     name=NAME,
     version=VERSION,
     description="CF JSON converters",
-    author_email="ops@metocean.co.nz",
+    author_email="support@metocean.co.nz",
     keywords=["CF-JSON"],
     packages=[NAME],
-    requires=REQUIRES,
+    install_requires=install_requires,
     tests_require=tests_require,
     long_description="""\
     Classes and functions for CF-JSON format conversion
-    """
+    """,
 )
