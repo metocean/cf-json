@@ -3,7 +3,13 @@ Python package to import / export CF-JSON data
 
 See also: https://github.com/cf-json/cf-json.github.io (which is the source for http://cf-json.org/).
 
-Comment 2020-06-15: I'd really only trust the xarray methods at the moment, the other two have been neglected... So I'd recommend using those from here, and then xarray's own to_pandas, to_netcdf, etc. if required.
+Comment 2020-06-15: at the moment, I'd really only trust the xarray code (xrdataset.py), the other two have been neglected (ncdataset.py, pddataset.py), and are not well tested. So I'd recommend using just cfjson.xrdataset.CFJSONinterface, and then xarray's own to_pandas or to_netcdf methods if required.
+
+
+## Installation
+```python3
+python -m pip install git+https://github.com/metocean/cf-json
+```
 
 
 ## Example
@@ -36,6 +42,7 @@ In [2]: pp.pprint(json.loads(dset.cfjson.json_dumps()))
 
 In [3]:
 ```
+
 
 ## License
 
