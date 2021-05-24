@@ -16,6 +16,21 @@ encoder.FLOAT_REPR = lambda o: format(o, '.4f').rstrip('0').rstrip('.')
 AXIS_VAR=['time','lat','latitude','lon','longitude','site']
 SPECIAL_ATTRS=['missing_value','cell_methods']
 
+def check_time_zones(time_dt):
+    """
+    Check whether datetimes are time-zone aware and if that's possible
+    fix them into non time-zone aware datetimes. This is required as
+    time-zone aware datetime are converted to dtype=object by xarray.
+    """
+
+    if any([t.utcoffset() is not None for t in time_dt]):
+        if all([t.utcoffset() == dt.timedelta(0) for t in time_dt]):
+            # Timezone-aware, even if they're all the same timezone, would lead to dtype=object
+            time_dt = [t.replace(tzinfo=None) for t in time_dt]
+        else:
+            logging.warning('Mixed timezones (or mixed naive / aware) in input, may lead to dtype=object in output')
+    return time_dt
+
 @xr.register_dataset_accessor('cfjson')
 class CFJSONinterface(object):
     def __init__(self, xarray_obj):
@@ -144,14 +159,12 @@ class CFJSONinterface(object):
             if 'units' in var['attributes'] and 'ISO8601' in var['attributes']['units']:
                 logging.debug('found "ISO8601" in units string, guessing time variable, converting to datetime64')
                 time_strings = var['data']
-                time_dt = [dateutil.parser.parse(tx) for tx in time_strings]
-                # If timezone information was provided (e.g., "Z")
-                if any([t.utcoffset() is not None for t in time_dt]):
-                    if all([t.utcoffset() == dt.timedelta(0) for t in time_dt]):
-                        # Timezone-aware, even if they're all the same timezone, would lead to dtype=object
-                        time_dt = [t.replace(tzinfo=None) for t in time_dt]
-                    else:
-                        logging.warning('Mixed timezones (or mixed naive / aware) in input, may lead to dtype=object in output')
+                if isinstance(time_strings, list):
+                    time_dt = [dateutil.parser.parse(tx) for tx in time_strings]
+                    time_dt = check_time_zones(time_dt)
+                else:
+                    time_dt = dateutil.parser.parse(time_strings)
+                    time_dt = check_time_zones([time_dt])[0]
                 self._obj[varname] = (var['shape'], time_dt)
                 logging.debug('copying variable "{}" attributes: {}'.format(varname, var['attributes'].items()))
                 self._obj[varname].attrs = var['attributes']
