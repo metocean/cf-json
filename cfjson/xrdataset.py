@@ -155,7 +155,8 @@ class CFJSONinterface(object):
                 self._obj[varname] = (var['shape'], time_dt)
                 logging.debug('copying variable "{}" attributes: {}'.format(varname, var['attributes'].items()))
                 self._obj[varname].attrs = var['attributes']
-                self._obj[varname].attrs['units'] = 'Python datetime64 objects'
+                # Potential old units are irrelevant now, and could break xarray's to_netcdf.
+                self._obj[varname].attrs.pop('units', None)
             else:
                 if var['shape']:
                     # shape=['dim1'] (in contrast to shape=[])
