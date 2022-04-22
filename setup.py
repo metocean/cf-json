@@ -2,7 +2,7 @@
 from setuptools import setup
 
 NAME = "cfjson"
-VERSION = "0.3.6"
+VERSION = "0.3.7"
 
 # To install the library, run the following
 #
