@@ -70,9 +70,9 @@ class CFJSONinterface(object):
                             newatt=float(newatt)
                         except:
                             newatt=str(newatt)
-                        res['variables'][varout]['attributes'][att]=newatt
+                        res['variables'][varout][att]=newatt
                     else:
-                        res['variables'][varout]['attributes'][att]=self._obj.variables[var].attrs[att]
+                        res['variables'][varout][att]=self._obj.variables[var].attrs[att]
             except:
                 print('Failed to export variable %s description or attributes'%(var))
                 raise
