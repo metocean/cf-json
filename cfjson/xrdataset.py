@@ -14,7 +14,7 @@ logging.basicConfig()
 encoder.FLOAT_REPR = lambda o: format(o, '.4f').rstrip('0').rstrip('.')
 
 AXIS_VAR=['time','lat','latitude','lon','longitude','site']
-SPECIAL_ATTRS=['missing_value','cell_methods']
+SPECIAL_ATTRS=['type', 'missing_value','cell_methods']
 
 @xr.register_dataset_accessor('cfjson')
 class CFJSONinterface(object):
@@ -64,15 +64,17 @@ class CFJSONinterface(object):
                 else:
                     res['variables'][varout]['shape'] = []
                 for att in self._obj.variables[var].attrs:
-                    if att not in SPECIAL_ATTRS:
-                        newatt=self._obj.variables[var].attrs[att]
+                    newatt=self._obj.variables[var].attrs[att]
+                    print(att, newatt)
+                    if att in SPECIAL_ATTRS:
+                       # res['variables'][varout][att]=newatt
+                        pass
+                    else:
                         try:
                             newatt=float(newatt)
                         except:
                             newatt=str(newatt)
-                        res['variables'][varout][att]=newatt
-                    else:
-                        res['variables'][varout][att]=self._obj.variables[var].attrs[att]
+                        res['variables'][varout][att]['attributes']=newatt
             except:
                 print('Failed to export variable %s description or attributes'%(var))
                 raise
