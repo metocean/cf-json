@@ -14,7 +14,7 @@ logging.basicConfig()
 encoder.FLOAT_REPR = lambda o: format(o, '.4f').rstrip('0').rstrip('.')
 
 AXIS_VAR=['time','lat','latitude','lon','longitude','site']
-SPECIAL_ATTRS=['type', 'missing_value','cell_methods']
+SPECIAL_ATTRS=['missing_value','cell_methods']
 
 @xr.register_dataset_accessor('cfjson')
 class CFJSONinterface(object):
@@ -63,6 +63,9 @@ class CFJSONinterface(object):
                     res['variables'][varout]['shape'] = vardims
                 else:
                     res['variables'][varout]['shape'] = []
+                # There seems to be no built-in function in Python to convert numpy datatypes to Python datatypes, apart from this convoluted way
+                res['variables'][varout]['type'] = type(np.zeros(1, self._obj.dtypes[var].name).item()).__name__
+
                 for att in self._obj.variables[var].attrs:
                     newatt=self._obj.variables[var].attrs[att]
                     if att in SPECIAL_ATTRS:
