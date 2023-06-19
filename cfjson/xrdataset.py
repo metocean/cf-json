@@ -65,16 +65,14 @@ class CFJSONinterface(object):
                     res['variables'][varout]['shape'] = []
                 for att in self._obj.variables[var].attrs:
                     newatt=self._obj.variables[var].attrs[att]
-                    print(att, newatt)
                     if att in SPECIAL_ATTRS:
-                       # res['variables'][varout][att]=newatt
-                        pass
+                        res['variables'][varout][att]=newatt
                     else:
                         try:
                             newatt=float(newatt)
                         except:
                             newatt=str(newatt)
-                        res['variables'][varout][att]['attributes']=newatt
+                        res['variables'][varout]['attributes'][att]=newatt
             except:
                 print('Failed to export variable %s description or attributes'%(var))
                 raise
