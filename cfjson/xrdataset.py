@@ -21,7 +21,7 @@ class CFJSONinterface(object):
     def __init__(self, xarray_obj):
         self._obj=xarray_obj
         
-    def to_dict(self,mapping):
+    def to_dict(self,mapping,**kwargs):
         """
         Dumps the dataset as an ordered dictionary following the same conventions as ncdump.
         """
@@ -63,19 +63,24 @@ class CFJSONinterface(object):
                     res['variables'][varout]['shape'] = vardims
                 else:
                     res['variables'][varout]['shape'] = []
-                # There seems to be no built-in function in Python to convert numpy datatypes to Python datatypes, apart from this convoluted way
-                res['variables'][varout]['type'] = type(np.zeros(1, self._obj.dtypes[var].name).item()).__name__
+                
+                if kwargs.get("infer_dtype", False) is True:
+                    try:
+                        res['variables'][varout]['type'] = type(np.zeros(1, self._obj.dtypes[var].name).item()).__name__
+                    except:
+                        print(f"Failed to export dtype of {var}")
 
                 for att in self._obj.variables[var].attrs:
                     newatt=self._obj.variables[var].attrs[att]
-                    if att in SPECIAL_ATTRS:
-                        res['variables'][varout][att]=newatt
-                    else:
+                    if att not in SPECIAL_ATTRS:
                         try:
                             newatt=float(newatt)
                         except:
                             newatt=str(newatt)
                         res['variables'][varout]['attributes'][att]=newatt
+                    else:
+                        if kwargs.get("output_special_attrs", False) is True:
+                            res['variables'][varout][att]=newatt
             except:
                 print('Failed to export variable %s description or attributes'%(var))
                 raise
@@ -97,12 +102,12 @@ class CFJSONinterface(object):
 
         return res
 
-    def json_dumps(self, indent=2, separators=None, mapping={}, attributes={}):
+    def json_dumps(self, indent=2, separators=None, mapping={}, attributes={}, **kwargs):
         """
         Dumps a JSON representation of the Dataset following the same conventions as ncdump.
         Assumes the Dataset is CF complient.
         """
-        dico=self.to_dict(mapping)
+        dico=self.to_dict(mapping, **kwargs)
         try:
             dico['attributes'].update(attributes)
         except:
