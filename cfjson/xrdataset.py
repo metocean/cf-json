@@ -9,7 +9,6 @@ import dateutil
 import logging
 import six
 
-logging.basicConfig()
 
 encoder.FLOAT_REPR = lambda o: format(o, '.4f').rstrip('0').rstrip('.')
 
