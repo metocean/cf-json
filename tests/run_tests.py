@@ -1,9 +1,13 @@
+import json
 import unittest
 import time
 import xarray as xr
 
 import sys
 import os
+
+from cfjson.ncdataset import NCDataset
+
 sys.path.insert(0,os.path.join(os.path.dirname(__file__),'..'))
 
 from cfjson import *
@@ -20,7 +24,7 @@ def write_file(filename,json):
 def read_file(filename):
     with open(filename) as f:
         jsonstr=f.read()
-        print jsonstr
+        print(jsonstr)
     return json.loads(jsonstr)
 
 def check_required(obj):
