@@ -11,6 +11,11 @@ Comment 2020-06-15: at the moment, I'd really only trust the xarray code (xrdata
 python -m pip install git+https://github.com/metocean/cf-json
 ```
 
+### UV
+
+```python
+uv add git+https://github.com/metocean/cf-json.git
+```
 
 ## Example
 
@@ -48,7 +53,7 @@ In [3]:
 ## License
 
 Copyright 2017, 2018 MetOcean Solutions Ltd.  
-Copyright 2019-2022 MetOcean Solutions / Meteorological Service of New Zealand Ltd.
+Copyright 2019-2026 MetOcean Solutions / Meteorological Service of New Zealand Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 the content of this repository except in compliance with the License. See the
