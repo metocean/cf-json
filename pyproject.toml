@@ -3,7 +3,7 @@ name = "cfjson"
 version = "0.4.2"
 description = "CF-JSON converters"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "jupyterlab>=4.6.2",
     "numpy==2.5.1",
