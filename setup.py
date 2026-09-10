@@ -24,7 +24,7 @@ install_requires = [
 setup(
     name=NAME,
     version=VERSION,
-    description="CF JSON converters",
+    description="CF-JSON converters",
     author_email="support@metocean.co.nz",
     keywords=["CF-JSON"],
     packages=[NAME],

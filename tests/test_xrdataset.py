@@ -52,14 +52,18 @@ class TestTimeStringTimezones(uni.TestCase):
         ds = xr.Dataset()
         cfjson_string = '{"dimensions": {"time": 2}, "variables": {"x": {"shape": ["time"], "data": [10, 20], "attributes": {}}, "time": {"shape": ["time"], "data": ["2020-01-01T00:00:00Z", "2020-01-01T01:00:00Z"], "attributes": {"units": "ISO8601 timestamps"}}}}'
         ds.cfjson.from_json(cfjson_string)
-        self.assertEqual(ds['time'].dtype, np.dtype('<M8[us]'))
+        # Assert the datetime64 kind rather than a specific resolution, since the
+        # inferred unit (ns/us) varies across pandas/xarray versions.
+        self.assertEqual(ds['time'].dtype.kind, 'M')
 
     def test_timezone_none(self):
 
         ds = xr.Dataset()
         cfjson_string = '{"dimensions": {"time": 2}, "variables": {"x": {"shape": ["time"], "data": [10, 20], "attributes": {}}, "time": {"shape": ["time"], "data": ["2020-01-01T00:00:00", "2020-01-01T01:00:00"], "attributes": {"units": "ISO8601 timestamps"}}}}'
         ds.cfjson.from_json(cfjson_string)
-        self.assertEqual(ds['time'].dtype, np.dtype('<M8[us]'))
+        # Assert the datetime64 kind rather than a specific resolution, since the
+        # inferred unit (ns/us) varies across pandas/xarray versions.
+        self.assertEqual(ds['time'].dtype.kind, 'M')
 
     def test_timezone_mixed(self):
 

@@ -1,4 +1,5 @@
 /.tox/
+/.idea/
 .pytest_cache
 *.pyc
 *.html

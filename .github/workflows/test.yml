@@ -20,5 +20,5 @@ jobs:
       run: uv python install
     - name: Run tests
       run: |
-        uv run pytest --cov=spp_api --cov-report term-missing
+        uv run pytest --cov=cfjson --cov-report term-missing
 
