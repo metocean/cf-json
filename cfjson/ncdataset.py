@@ -15,7 +15,7 @@ def print_val(val):
     """
     # Turn val into something JSON can deal with i.e. int, float or string
     """
-    if type(val) in [bool, numpy.bool, numpy.bool_]:
+    if type(val) in [bool, numpy.bool_]:
         return bool(val)
     if type(val) in [int, numpy.int_, numpy.intc, numpy.intp, numpy.int8, numpy.int16, numpy.int32, numpy.int64, numpy.uint8, numpy.uint16, numpy.uint32, numpy.uint64]:
         return int(val)
