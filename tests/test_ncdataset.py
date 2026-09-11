@@ -1,6 +1,5 @@
 import json
 import unittest
-import time
 import xarray as xr
 
 import sys
@@ -8,9 +7,10 @@ import os
 
 from cfjson.ncdataset import NCDataset
 
-sys.path.insert(0,os.path.join(os.path.dirname(__file__),'..'))
+# pylint: disable=unused-import
+from cfjson.xrdataset import CFJSONinterface
 
-from cfjson import *
+sys.path.insert(0,os.path.join(os.path.dirname(__file__),'..'))
 
 TEST_FILES=['tests/uds_single_site.nc','tests/uds_multi_site.nc']
 TMP_DIR='/tmp'

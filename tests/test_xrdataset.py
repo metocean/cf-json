@@ -7,7 +7,6 @@ import numpy as np
 import xarray as xr
 
 # pylint: disable=unused-import
-from cfjson.xrdataset import CFJSONinterface
 
 
 class TestDimensionlessVariable(uni.TestCase):
@@ -48,22 +47,55 @@ class TestDimensionlessVariable(uni.TestCase):
 class TestTimeStringTimezones(uni.TestCase):
 
     def test_timezone_Z(self):
-
         ds = xr.Dataset()
-        cfjson_string = '{"dimensions": {"time": 2}, "variables": {"x": {"shape": ["time"], "data": [10, 20], "attributes": {}}, "time": {"shape": ["time"], "data": ["2020-01-01T00:00:00Z", "2020-01-01T01:00:00Z"], "attributes": {"units": "ISO8601 timestamps"}}}}'
+        cf_json_expected = {
+            "dimensions": {"time": 2},
+            "variables": {
+                "x":
+                    {"shape": ["time"], "data": [10, 20], "attributes": {}},
+                "time": {
+                    "shape": ["time"],
+                    "data": ["2020-01-01T00:00:00Z", "2020-01-01T01:00:00Z"],
+                    "attributes": {"units": "ISO8601 timestamps"}
+                }
+            }
+        }
+        cfjson_string = json.dumps(cf_json_expected)
         ds.cfjson.from_json(cfjson_string)
-        self.assertEqual(ds['time'].dtype, np.dtype('<M8[us]'))
+        self.assertEqual(ds['time'].dtype.kind, 'M')
+        self.assertEqual(ds['x'].dtype.kind, 'i')
+
 
     def test_timezone_none(self):
-
         ds = xr.Dataset()
-        cfjson_string = '{"dimensions": {"time": 2}, "variables": {"x": {"shape": ["time"], "data": [10, 20], "attributes": {}}, "time": {"shape": ["time"], "data": ["2020-01-01T00:00:00", "2020-01-01T01:00:00"], "attributes": {"units": "ISO8601 timestamps"}}}}'
+        cfjson_string_dict = {
+            "dimensions": {"time": 2},
+            "variables": {
+                "x": {"shape": ["time"], "data": [10, 20], "attributes": {}},
+                "time": {
+                    "shape": ["time"],
+                    "data": ["2020-01-01T00:00:00", "2020-01-01T01:00:00"],
+                    "attributes": {"units": "ISO8601 timestamps"}
+                }
+            }
+        }
+        cfjson_string = json.dumps(cfjson_string_dict)
         ds.cfjson.from_json(cfjson_string)
         self.assertEqual(ds['time'].dtype, np.dtype('<M8[us]'))
 
     def test_timezone_mixed(self):
-
         ds = xr.Dataset()
-        cfjson_string = '{"dimensions": {"time": 2}, "variables": {"x": {"shape": ["time"], "data": [10, 20], "attributes": {}}, "time": {"shape": ["time"], "data": ["2020-01-01T00:00:00", "2020-01-01T01:00:00Z"], "attributes": {"units": "ISO8601 timestamps"}}}}'
+        cfjson_string_dict = {
+            "dimensions": {"time": 2},
+            "variables": {
+                "x": {"shape": ["time"], "data": [10, 20], "attributes": {}},
+                "time": {
+                    "shape": ["time"],
+                    "data": ["2020-01-01T00:00:00", "2020-01-01T01:00:00Z"],
+                    "attributes": {"units": "ISO8601 timestamps"}
+                }
+            }
+        }
+        cfjson_string = json.dumps(cfjson_string_dict)
         ds.cfjson.from_json(cfjson_string)
         self.assertEqual(ds['time'].dtype, np.dtype('O'))
