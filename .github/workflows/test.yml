@@ -1,0 +1,19 @@
+name: test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v9.0.0
+      - name: install Python
+        run: uv python install
+      - name: Run tests
+        run: |
+          uv run pytest --cov=cfjson --cov-report term-missing
+

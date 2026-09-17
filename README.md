@@ -1,20 +1,56 @@
 # cf-json
 Python package to import / export CF-JSON data
 
-See also: https://github.com/cf-json/cf-json.github.io (which is the source for http://cf-json.org/).
+See also: https://github.com/cf-json/cf-json.github.io (which is the source for http://cf-json.github.io/).
 
 Comment 2020-06-15: at the moment, I'd really only trust the xarray code (xrdataset.py), the other two have been neglected (ncdataset.py, pddataset.py), and are not well tested. So I'd recommend using just cfjson.xrdataset.CFJSONinterface, and then xarray's own to_pandas or to_netcdf methods if required.
 
 
 ## Installation
-```python3
+
+### From git
+
+#### pip
+
+```shell
 python -m pip install git+https://github.com/metocean/cf-json
 ```
 
+#### uv
+
+```shell
+uv add git+https://github.com/metocean/cf-json.git
+```
+
+### From package*
+
+#### pip
+
+```shell
+pip install cfjson
+```
+
+#### uv
+
+```shell
+uv add cfjson
+```
+
+*: When the package is updated in PyPI, until then, use the git method 
+
+## Building
+
+```shell
+uv build
+```
+
+A build will put the artifacts in the `dist` folder.
 
 ## Example
 
-```python3
+See notebooks/readme_books:
+
+```
 Python 3.8.3 (default, May 17 2020, 18:15:42)
 Type 'copyright', 'credits' or 'license' for more information
 IPython 7.10.0 -- An enhanced Interactive Python. Type '?' for help.
@@ -47,7 +83,7 @@ In [3]:
 ## License
 
 Copyright 2017, 2018 MetOcean Solutions Ltd.  
-Copyright 2019-2022 MetOcean Solutions / Meteorological Service of New Zealand Ltd.
+Copyright 2019-2026 MetOcean Solutions / Meteorological Service of New Zealand Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 the content of this repository except in compliance with the License. See the
